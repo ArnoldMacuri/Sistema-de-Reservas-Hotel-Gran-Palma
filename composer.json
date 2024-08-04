@@ -1,0 +1,8 @@
+{
+    "require": {
+        "mercadopago/dx-php": "^3.0",
+        "dompdf/dompdf": "^2.0",
+        "nesbot/carbon": "^3.1",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

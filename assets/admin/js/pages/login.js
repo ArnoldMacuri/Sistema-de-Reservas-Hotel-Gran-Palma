@@ -1,0 +1,58 @@
+const formulario = document.querySelector('#formulario');
+const correo = document.querySelector('#correo');
+const clave = document.querySelector('#clave');
+
+const errorCorreo = document.querySelector('#errorCorreo');
+const errorClave = document.querySelector('#errorClave');
+
+document.addEventListener('DOMContentLoaded', function () {
+    formulario.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (correo.value == '' || clave.value == '') {
+            alertaSW('Todo los campos son requeridos*', 'warning');
+        } else {
+            const url = ruta_admin + 'login/verify';
+            //crear formData
+            const data = new FormData(this);
+            //hacer una instancia del objeto XMLHttpRequest 
+            const http = new XMLHttpRequest();
+            //Abrir una Conexion - POST - GET
+            http.open('POST', url, true);
+            //Enviar Datos
+            http.send(data);
+            //verificar estados
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    const res = JSON.parse(this.responseText);
+                    alertaSW(res.msg, res.tipo);
+                    if (res.tipo == 'success') {
+                        setTimeout(() => {
+                            let timerInterval
+                            Swal.fire({
+                                title: 'BIENVENIDO',
+                                html: 'Será redireccionado en <b></b> milliseconds.',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading()
+                                    const b = Swal.getHtmlContainer().querySelector('b')
+                                    timerInterval = setInterval(() => {
+                                        b.textContent = Swal.getTimerLeft()
+                                    }, 100)
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                }
+                            }).then((result) => {
+                                /* Read more about handling dismissals below */
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    window.location = ruta_admin + 'dashboard';
+                                }
+                            })
+                        }, 2000);
+                    }
+                }
+            }
+        }
+    });
+})
